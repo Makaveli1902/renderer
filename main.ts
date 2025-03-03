@@ -7,7 +7,7 @@ import {
   ACESFilmicToneMapping,
   } from "three";
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { getOrbitControls, loadModel, setBackground, setLight } from "./helpers/model.helper";
+import { getOrbitControls, loadModel, loadTexture, setBackground, setLight } from "./helpers/model.helper";
 import { resizeRenderingArea } from "./helpers/common.helper";
 
 
@@ -49,7 +49,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Handle file upload
+// Handle model upload
 document.getElementById('file')?.addEventListener('change', () => {
   const fileInput = document.getElementById('file') as HTMLInputElement;
   if (fileInput.files && fileInput.files[0]) {
@@ -62,6 +62,23 @@ document.getElementById('file')?.addEventListener('change', () => {
       // }
     };
     reader.readAsArrayBuffer(file);
+  }
+});
+
+// Handle texture upload
+document.getElementById('texture')?.addEventListener('change', () => {
+  const fileInput = document.getElementById('texture') as HTMLInputElement;
+  if (fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const contents = event.target?.result;
+      loadTexture(contents as string, file.name)
+      // if (typeof contents === 'string') {
+        // loadTexture(contents as ArrayBuffer, scene, controls, camera, true);
+      // }
+    };
+    reader.readAsDataURL(file);
   }
 });
 

@@ -25,6 +25,7 @@ import { GLTF, GLTFLoader, OrbitControls } from "three/examples/jsm/Addons.js";
 const MANAGER = new LoadingManager();
 let selectedGroup: string | null = null;
 let groups = new Map<string, Object3D[]>();
+let materials: { [key: string]: MeshStandardMaterial } = {};
 
 export function setLight(scene: Scene) {
   const ambientLight = new AmbientLight(0xffffff, 0.5); // Further reduced intensity
@@ -127,9 +128,14 @@ function setModel(
   checkMaterials(model); // Check and modify materials
 }
 
-function checkMaterials(model: Group<Object3DEventMap>) {
-  const textureLoader = new TextureLoader();
-  const materials = {
+export function loadTexture(dataURL: string, name: string) {
+  const material = loadMaterial(dataURL);
+  materials[name] = material;
+  renderMaterialsDropdown();
+}
+
+function loadMaterials() {
+  materials = {
     misterio03: loadMaterial("textures/misterio/Misterio_03_base-d7350.jpg"),
     misterio14: loadMaterial("textures/misterio/Misterio_14_base-c5e10.jpg"),
     misterio70: loadMaterial("textures/misterio/Misterio_70_base-571f9.jpg"),
@@ -137,11 +143,24 @@ function checkMaterials(model: Group<Object3DEventMap>) {
     misterio90: loadMaterial("textures/misterio/Misterio_90_base-6a7f8.jpg"),
   };
 
+  renderMaterialsDropdown();
   // materials.newFabric.map!.repeat.set(5, 5);
   // materials.newFabric.map!.wrapS = RepeatWrapping;
   // materials.newFabric.map!.wrapT = RepeatWrapping;
   // materials.newFabric.map!.colorSpace = "srgb";
+}
 
+function renderMaterialsDropdown() {
+  Object.keys(materials).forEach((material) => {
+    const option = document.createElement("option");
+    option.value = material;
+    option.textContent = material;
+    document.getElementById("material")?.appendChild(option);
+  });
+}
+
+function checkMaterials(model: Group<Object3DEventMap>) {
+  loadMaterials();
   // Traverse the model to find materials and modify them
   groups.clear();
   model.traverse((child: any) => {
