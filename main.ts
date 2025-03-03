@@ -34,9 +34,9 @@ setLight(scene);
 // scene.background = new Color( 0xbfe3dd );
 // scene.environment = pmremGenerator.fromScene(new RoomEnvironment()).texture;
 
-setBackground('public/background/room.jpg', scene);
+setBackground('background/room.jpg', scene);
 const controls = getOrbitControls(camera, renderer);
-loadModel("public/models/como/como.glb", scene, controls, camera);
+loadModel('models/como/como2.glb', scene, controls, camera);
 window.addEventListener('resize', (e) => { resizeRenderingArea(camera,renderer)}, false);
 window.addEventListener('mousedown', (e) => { resizeRenderingArea(camera,renderer)}, false);
 window.addEventListener('touchstart', (e) => { resizeRenderingArea(camera,renderer)}, false);
@@ -48,6 +48,22 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
+
+// Handle file upload
+document.getElementById('file')?.addEventListener('change', () => {
+  const fileInput = document.getElementById('file') as HTMLInputElement;
+  if (fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const contents = event.target?.result;
+      // if (typeof contents === 'string') {
+        loadModel(contents as ArrayBuffer, scene, controls, camera, true);
+      // }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+});
 
 animate();
 

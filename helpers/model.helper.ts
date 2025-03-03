@@ -18,7 +18,7 @@ import {
 import { CubeTextureLoader } from "three";
 import { Box3 } from "three";
 import { Object3D } from "three";
-import { GLTFLoader, OrbitControls } from "three/examples/jsm/Addons.js";
+import { GLTF, GLTFLoader, OrbitControls } from "three/examples/jsm/Addons.js";
 
 const MANAGER = new LoadingManager();
 let selectedGroup: string | null = null;
@@ -27,15 +27,15 @@ let groups = new Map<string, Object3D[]>();
 export function setLight(scene: Scene) {
   const ambientLight = new AmbientLight(0xffffff, 0.5); // Further reduced intensity
   scene.add(ambientLight);
-  
+
   const directionalLight = new DirectionalLight(0xffffff, 1); // Further reduced intensity
   directionalLight.position.set(50, 50, 50);
   scene.add(directionalLight);
-  
+
   const hemiLight = new HemisphereLight(0xffffff, 0x444444, 1); // Further reduced intensity
   hemiLight.position.set(0, 50, 0);
   scene.add(hemiLight);
-  
+
   const pointLight = new PointLight(0xffffff, 1); // Further reduced intensity
   pointLight.position.set(5, 5, 5);
   scene.add(pointLight);
@@ -77,39 +77,62 @@ export function setBackground(imagePath: string, scene: Scene) {
 }
 
 export function loadModel(
-  src: string,
+  src: string | ArrayBuffer,
+  scene: Scene,
+  controls: OrbitControls,
+  camera: PerspectiveCamera,
+  isUpload = false
+) {
+  // Remove previous model
+  if (scene.children.length) {
+    const previousModel = scene.children.find(x => x.type === 'Group');
+    if (previousModel) {
+      scene.remove(previousModel);
+    }
+  }
+  const loader = new GLTFLoader(MANAGER);
+  if (isUpload) {
+    loader.parse(src, "", (gltf) => {
+      setModel(gltf, scene, controls, camera);
+    });
+  } else {
+    loader.load(
+      src as string, // Replace with the path to your 3D model file
+      (gltf) => {
+        setModel(gltf, scene, controls, camera);
+      },
+      undefined, // onProgress callback
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+}
+
+function setModel(
+  gltf: GLTF,
   scene: Scene,
   controls: OrbitControls,
   camera: PerspectiveCamera
 ) {
-  const loader = new GLTFLoader();
-  loader.load(
-    src, // Replace with the path to your 3D model file
-    (gltf) => {
-      const model = gltf.scene;
-      scene.add(model);
-      model.scale.set(1, 1, 1); // Scale model if needed
-      model.position.set(0, 0, 0); // Position model if needed
+  const model = gltf.scene;
+  scene.add(model);
+  model.scale.set(1, 1, 1); // Scale model if needed
+  model.position.set(0, 0, 0); // Position model if needed
 
-      centerCameraOnModel(model, controls, camera);
-      // setMinDistanceBasedOnModel(model);
-      checkMaterials(model); // Check and modify materials
-    },
-    undefined, // onProgress callback
-    (error) => {
-      console.error(error);
-    }
-  );
+  centerCameraOnModel(model, controls, camera);
+  // setMinDistanceBasedOnModel(model);
+  checkMaterials(model); // Check and modify materials
 }
 
 function checkMaterials(model: Group<Object3DEventMap>) {
   const textureLoader = new TextureLoader();
   const materials = {
-    misterio03: loadMaterial("public/textures/misterio/Misterio_03_base-d7350.jpg"),
-    misterio14: loadMaterial("public/textures/misterio/Misterio_14_base-c5e10.jpg"),
-    misterio70: loadMaterial("public/textures/misterio/Misterio_70_base-571f9.jpg"),
-    misterio80: loadMaterial("public/textures/misterio/Misterio_80_base-9a472.jpg"),
-    misterio90: loadMaterial("public/textures/misterio/Misterio_90_base-6a7f8.jpg")
+    misterio03: loadMaterial("textures/misterio/Misterio_03_base-d7350.jpg"),
+    misterio14: loadMaterial("textures/misterio/Misterio_14_base-c5e10.jpg"),
+    misterio70: loadMaterial("textures/misterio/Misterio_70_base-571f9.jpg"),
+    misterio80: loadMaterial("textures/misterio/Misterio_80_base-9a472.jpg"),
+    misterio90: loadMaterial("textures/misterio/Misterio_90_base-6a7f8.jpg"),
   };
 
   // materials.newFabric.map!.repeat.set(5, 5);
@@ -148,6 +171,13 @@ function checkMaterials(model: Group<Object3DEventMap>) {
   });
 
   const groupSelect = document.getElementById("group");
+  // remove all from group select
+  if (groupSelect) {
+    while (groupSelect.firstChild) {
+      groupSelect.removeChild(groupSelect.firstChild);
+    }
+  }
+
   if (groupSelect) {
     groups.forEach((group, name) => {
       const opt = document.createElement("option");
@@ -170,8 +200,8 @@ function loadMaterial(src: string): MeshStandardMaterial {
     map: textureLoader.load(src, (texture) => {
       texture.wrapS = RepeatWrapping;
       texture.wrapT = RepeatWrapping;
-      texture.colorSpace = 'srgb';
+      texture.colorSpace = "srgb";
       texture.needsUpdate = true;
-    })
+    }),
   });
 }
