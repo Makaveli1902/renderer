@@ -3,8 +3,10 @@ import {
   DirectionalLight,
   Group,
   HemisphereLight,
+  LinearFilter,
   LoadingManager,
   MeshStandardMaterial,
+  NearestFilter,
   Object3DEventMap,
   PerspectiveCamera,
   PointLight,
@@ -201,7 +203,10 @@ function loadMaterial(src: string): MeshStandardMaterial {
       texture.wrapS = RepeatWrapping;
       texture.wrapT = RepeatWrapping;
       texture.colorSpace = "srgb";
+      texture.minFilter = LinearFilter;
+      texture.magFilter = NearestFilter;
+      texture.anisotropy = 16; // Increase anisotropy for better quality
       texture.needsUpdate = true;
-    }),
+    })
   });
 }
