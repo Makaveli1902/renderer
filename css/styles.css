@@ -18,10 +18,10 @@ canvas {
   gap: 5px;
 }
 #controls #textures {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 10px;
-  max-width: 400px;
-  overflow-x: auto;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  max-height: 220px;
+  overflow-y: auto;
+  row-gap: 10px;
 }

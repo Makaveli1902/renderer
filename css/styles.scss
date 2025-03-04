@@ -7,7 +7,7 @@ canvas {
 }
 
 #controls {
-    position: absolute;  
+    position: absolute;
     top: 10px;
     left: 10px;
     background: rgba(255, 255, 255, 0.8);
@@ -19,11 +19,11 @@ canvas {
     gap: 5px;
 
     #textures {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 10px;
-        max-width: 400px;
-        overflow-x: auto;
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
+        max-height: 220px;
+        overflow-y: auto;
+        row-gap: 10px;
     }
 }
