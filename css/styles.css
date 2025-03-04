@@ -25,3 +25,12 @@ canvas {
   overflow-y: auto;
   row-gap: 10px;
 }
+@media (max-width: 1280px) {
+  #controls {
+    width: 200px;
+  }
+  #controls #textures img {
+    width: 50px;
+    height: 50px;
+  }
+}
