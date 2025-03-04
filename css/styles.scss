@@ -17,4 +17,13 @@ canvas {
     display: flex;
     flex-direction: column;
     gap: 5px;
+
+    #textures {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 10px;
+        max-width: 400px;
+        overflow-x: auto;
+    }
 }
