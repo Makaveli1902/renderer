@@ -25,11 +25,15 @@ canvas {
         max-height: 220px;
         overflow-y: auto;
         row-gap: 10px;
+
+        .selected {
+            border: 2px solid red;
+        }
     }
 
     @media (max-width: 1280px) {
         width: 200px;
-        
+
         #textures {
             img {
                 width: 50px;

@@ -25,6 +25,9 @@ canvas {
   overflow-y: auto;
   row-gap: 10px;
 }
+#controls #textures .selected {
+  border: 2px solid red;
+}
 @media (max-width: 1280px) {
   #controls {
     width: 200px;
