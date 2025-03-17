@@ -23,7 +23,7 @@ canvas {
   grid-template-columns: 1fr 1fr 1fr;
   max-height: 220px;
   overflow-y: auto;
-  row-gap: 10px;
+  gap: 10px;
 }
 #controls #textures .selected {
   border: 2px solid red;
